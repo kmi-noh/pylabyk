@@ -21,7 +21,12 @@ from torch import nn
 from torch.nn import functional as F
 from torch import optim
 
-from pytorchobjective.obj_torch import PyTorchObjective
+import sys
+module_path =  "./Tools"
+sys.path.append(module_path)
+
+from lib.pytorchobjective.obj_torch import PyTorchObjective
+# from .torch2scipy.obj import PyTorchObjective
 
 from . import numpytorch as npt, plt2
 from .numpytorch import npy
@@ -193,9 +198,9 @@ class BoundedParameter(OverriddenParameter):
         # To allow fixing a subset of the parameter
         self.shape = data.shape
         self.update_is_fixed()
-
+        self._data = self.param2data(data)
         self._param = nn.Parameter(
-            self.data2param(data),
+            self.data2param(data), ## edited
             requires_grad=requires_grad,
             # name=name
         )
@@ -235,6 +240,7 @@ class BoundedParameter(OverriddenParameter):
         if lb is not None and ub is not None and (lb == ub).all():
             if (data != lb).any():
                 print('Out of lb=ub assignment to %s!' % type(self))
+                print(f"data val: {data.item()} while lb= {lb.item()} and ub= {ub.item()}")
             return npt.zeros_like(data)
 
         if lb is not None:
@@ -954,6 +960,9 @@ def enforce_float_tensor(v: Union[torch.Tensor, np.ndarray], device=None
     """
     :rtype: torch.DoubleTensor, torch.FloatTensor
     """
+    # print(f"current input: {v}")
+    # print(f"is input floattensor? {isinstance(v, torch.FloatTensor)}")
+    
     if device is None:
         device = default_device
     if not torch.is_tensor(v):

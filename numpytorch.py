@@ -1230,7 +1230,7 @@ def test_softmax_bias():
     q = softmax_bias(p, tensor(1.), p)
     plt.subplot(2, 3, 1)
     plt.plot(*npys(p, q))
-    plt.xlabel('bias \& p')
+    plt.xlabel('bias p')
 
     plt.subplot(2, 3, 2)
     biases = linspace(1e-6, 1 - 1e-6, 5)
